@@ -30,7 +30,7 @@ function version_2(PDO $pdo)
 
 function version_1(PDO $pdo)
 {
-    $pdo->exec("CREATE TABLE users (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
@@ -44,7 +44,7 @@ function version_1(PDO $pdo)
         fever_api_key VARCHAR(255) NOT NULL UNIQUE
     )");
 
-    $pdo->exec('CREATE TABLE user_settings (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS user_settings (
         "user_id" INTEGER NOT NULL,
         "key" VARCHAR(255) NOT NULL,
         "value" TEXT NOT NULL,
@@ -52,7 +52,7 @@ function version_1(PDO $pdo)
         FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     )');
 
-    $pdo->exec('CREATE TABLE feeds (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS feeds (
         id BIGSERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         feed_url VARCHAR(255) NOT NULL,
@@ -70,7 +70,7 @@ function version_1(PDO $pdo)
         UNIQUE(user_id, feed_url)
     )');
 
-    $pdo->exec('CREATE TABLE items (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS items (
         id BIGSERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         feed_id BIGINT NOT NULL,
@@ -91,7 +91,7 @@ function version_1(PDO $pdo)
         UNIQUE(feed_id, checksum)
     )');
 
-    $pdo->exec('CREATE TABLE "groups" (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS "groups" (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         title VARCHAR(255) NOT NULL,
@@ -99,7 +99,7 @@ function version_1(PDO $pdo)
         UNIQUE(user_id, title)
     )');
 
-    $pdo->exec('CREATE TABLE "feeds_groups" (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS "feeds_groups" (
         feed_id BIGINT NOT NULL,
         group_id INTEGER NOT NULL,
         PRIMARY KEY(feed_id, group_id),
@@ -107,13 +107,13 @@ function version_1(PDO $pdo)
         FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
     )');
 
-    $pdo->exec('CREATE TABLE favicons (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS favicons (
         id SERIAL PRIMARY KEY,
         hash VARCHAR(255) UNIQUE,
         type VARCHAR(50)
     )');
 
-    $pdo->exec('CREATE TABLE "favicons_feeds" (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS "favicons_feeds" (
         feed_id BIGINT NOT NULL,
         favicon_id INTEGER NOT NULL,
         PRIMARY KEY(feed_id, favicon_id),
@@ -121,7 +121,7 @@ function version_1(PDO $pdo)
         FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
     )');
 
-    $pdo->exec('CREATE TABLE remember_me (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS remember_me (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         ip VARCHAR(255),
@@ -152,6 +152,6 @@ function version_1(PDO $pdo)
         md5('admin:'.$fever_token),
     ));
 
-    $pdo->exec('CREATE INDEX items_user_status_idx ON items(user_id, status)');
-    $pdo->exec('CREATE INDEX items_user_feed_idx ON items(user_id, feed_id)');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS items_user_status_idx ON items(user_id, status)');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS items_user_feed_idx ON items(user_id, feed_id)');
 }

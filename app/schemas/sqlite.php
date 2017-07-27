@@ -29,7 +29,7 @@ function version_2(PDO $pdo)
 
 function version_1(PDO $pdo)
 {
-    $pdo->exec('CREATE TABLE users (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
@@ -43,7 +43,7 @@ function version_1(PDO $pdo)
         fever_api_key TEXT NOT NULL UNIQUE
     )');
 
-    $pdo->exec('CREATE TABLE user_settings (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS user_settings (
         "user_id" INTEGER NOT NULL,
         "key" TEXT NOT NULL,
         "value" TEXT NOT NULL,
@@ -51,7 +51,7 @@ function version_1(PDO $pdo)
         FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     )');
 
-    $pdo->exec('CREATE TABLE feeds (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS feeds (
         id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL,
         feed_url TEXT NOT NULL,
@@ -69,7 +69,7 @@ function version_1(PDO $pdo)
         UNIQUE(user_id, feed_url)
     )');
 
-    $pdo->exec('CREATE TABLE items (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS items (
         id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL,
         feed_id INTEGER NOT NULL,
@@ -90,7 +90,7 @@ function version_1(PDO $pdo)
         UNIQUE(feed_id, checksum)
     )');
 
-    $pdo->exec('CREATE TABLE "groups" (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS "groups" (
         id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL,
         title TEXT COLLATE NOCASE NOT NULL,
@@ -98,7 +98,7 @@ function version_1(PDO $pdo)
         UNIQUE(user_id, title)
     )');
 
-    $pdo->exec('CREATE TABLE "feeds_groups" (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS "feeds_groups" (
         feed_id INTEGER NOT NULL,
         group_id INTEGER NOT NULL,
         PRIMARY KEY(feed_id, group_id),
@@ -106,13 +106,13 @@ function version_1(PDO $pdo)
         FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
     )');
 
-    $pdo->exec('CREATE TABLE favicons (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS favicons (
         id INTEGER PRIMARY KEY,
         hash TEXT UNIQUE,
         type TEXT
     )');
 
-    $pdo->exec('CREATE TABLE "favicons_feeds" (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS "favicons_feeds" (
         feed_id INTEGER NOT NULL,
         favicon_id INTEGER NOT NULL,
         PRIMARY KEY(feed_id, favicon_id),
@@ -120,7 +120,7 @@ function version_1(PDO $pdo)
         FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
     )');
 
-    $pdo->exec('CREATE TABLE remember_me (
+    $pdo->exec('CREATE TABLE IF NOT EXISTS remember_me (
         id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL,
         ip TEXT,
